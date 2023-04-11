@@ -4,13 +4,13 @@ const PostsCategory = (sequelize, DataTypes) => {
   });
 
   PostsCategory.associate = (models) => {
-    models.blog_posts.belongsToMany(models.categories, {
+    models.BlogPost.belongsToMany(models.Category, {
       as: 'categories',
       through: PostsCategory,
       foreignKey: 'category_id', // se refere ao id de Book na tabela de `users_books`
       otherKey: 'post_id', // se refere a outra chave de `users_books`
     });
-    models.categories.belongsToMany(models.blog_posts, {
+    models.Category.belongsToMany(models.BlogPost, {
       as: 'blog_posts',
       through: PostsCategory,
       foreignKey: 'post_id', // se refere ao id de User na tabela de `users_books`
