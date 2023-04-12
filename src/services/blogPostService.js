@@ -1,5 +1,5 @@
 const Sequelize = require('sequelize');
-const { BlogPost, PostCategory } = require('../models');
+const { BlogPost, PostCategory, User, Category } = require('../models');
 const config = require('../config/config');
 
 const sequelize = new Sequelize(config[process.env.NODE_ENV]);
@@ -13,16 +13,12 @@ const createBlogPost = async (id, title, content, categoryIds) => {
       categoryIds, 
       published: new Date(),
       updated: new Date() }, { transaction });
-    console.log('esse aquiiii', newBlogPost.id);
-    // await Promise.all(categoryIds.map(async (category) => {
-  
-    //   await PostCategory.create({ postId: newBlogPost.id, categoryId: category });
-    //   }));
+
     const postCategories = categoryIds.map((category) => ({
       postId: newBlogPost.id,
       categoryId: category,
     }));
-    console.log(postCategories);
+  
     await PostCategory.bulkCreate(postCategories, { transaction });
     return newBlogPost;
   });
@@ -30,6 +26,53 @@ const createBlogPost = async (id, title, content, categoryIds) => {
   return newEntry;
 };
 
+const getAllblogPosts = async () => {
+  const allBlogPosts = await BlogPost.findAll({
+    include: [{ 
+      model: User, 
+      as: 'user', 
+      attributes: { exclude: ['password'] }, 
+    }, {
+      model: Category,
+      as: 'categories',
+    }],
+  });
+
+  return allBlogPosts;
+};
+
+const getBlogPostsById = async (id) => {
+  const blogPostById = await BlogPost.findOne({ where: { id },
+    include: [{ 
+      model: User, 
+      as: 'user', 
+      attributes: { exclude: ['password'] }, 
+    }, {
+      model: Category,
+      as: 'categories',
+    }] });
+
+  return blogPostById;
+};
+
+const updateBlogPostById = async (id, title, content) => {
+  const updatedBlogPostById = await BlogPost
+  .update({ title, content }, { where: { id }, 
+    include: [{ 
+    model: User, 
+    as: 'user', 
+    attributes: { exclude: ['password'] }, 
+  }, {
+    model: Category,
+    as: 'categories',
+  }] });
+
+  return updatedBlogPostById;
+};
+
 module.exports = {
   createBlogPost,
+  getAllblogPosts,
+  getBlogPostsById,
+  updateBlogPostById,
 };

@@ -2,17 +2,9 @@ const PostsCategory = (sequelize, DataTypes) => {
   const PostsCategory = sequelize.define('PostCategory', {
     postId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: 'blog_posts',
-        key: 'post_id'
-      }
     },
     categoryId: {
       type: DataTypes.INTEGER,
-      references: {
-        model: 'categories',
-        key: 'category_id'
-      }
     }
   }, {
    timestamps: false,

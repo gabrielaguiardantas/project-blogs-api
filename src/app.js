@@ -22,9 +22,14 @@ app.post('/login', userController.createLogin);
 app.post('/user', verifyUserFields, userController.createUser);
 app.post('/categories', validateJWT, categoryController.createCategory);
 app.post('/post', validateJWT, verifyBlogPostFields, blogPostController.createBlogPost);
+
 app.get('/user/:id', validateJWT, userController.getByUserId);
 app.get('/user', validateJWT, userController.getAllUsers);
 app.get('/categories', validateJWT, categoryController.getAllCategories);
+app.get('/post/:id', validateJWT, blogPostController.getBlogPostsById);
+app.get('/post', validateJWT, blogPostController.getAllBlogPosts);
+
+app.put('/post/:id', validateJWT, blogPostController.updateBlogPostById);
 
 // É importante exportar a constante `app`,
 // para que possa ser utilizada pelo arquivo `src/server.js`
