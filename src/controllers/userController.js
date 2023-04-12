@@ -18,7 +18,7 @@ const createLogin = async (req, res) => {
     const payload = {
       username: req.body.email,
       admin: false };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
     
     return res.status(200).json({ token });
   } catch (e) {
