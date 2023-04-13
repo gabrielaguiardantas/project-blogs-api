@@ -33,7 +33,15 @@ const createUser = async (displayName, email, password, image) => {
   if (userAlreadyRegistered) return { message: 'User already registered' };
 
   const newUser = await User.create({ displayName, email, password, image });
-  if (newUser) return true;
+  return newUser;
+};
+
+const deleteYourself = async (id) => {
+  await User.destroy({ where: { id } });
+
+  const deletedUser = await getByUserId(id);
+
+  return !deletedUser;
 };
 
 module.exports = {
@@ -42,4 +50,5 @@ module.exports = {
   getByEmail,
   getAllUsers,
   getByUserId,
+  deleteYourself,
 };

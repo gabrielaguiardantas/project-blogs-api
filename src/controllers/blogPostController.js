@@ -28,6 +28,13 @@ const getBlogPostsById = async (req, res) => {
   return res.status(200).json(blogPostById);
 };
 
+const getBlogPostsByTerm = async (req, res) => {
+  const { q } = req.query;
+  const blogPostByTerm = await blogPostService.getBlogPostsByTerm(q);
+  
+  return res.status(200).json(blogPostByTerm);
+};
+
 const updateBlogPostById = async (req, res) => {
   const { id } = req.params;
   const { title, content } = req.body;
@@ -52,9 +59,33 @@ const updateBlogPostById = async (req, res) => {
   return res.status(200).json(blogPostAfterUpdate);
 };
 
+const deleteBlogPostById = async (req, res) => {
+  const { id } = req.params;
+  const usernameLoggedId = req.user.id;
+  const blogPostBeforeDelete = await blogPostService.getBlogPostsById(id);
+
+  if (!blogPostBeforeDelete) {
+    return res.status(404).json({
+    message: 'Post does not exist',
+    }); 
+  }
+
+  if (+usernameLoggedId !== +blogPostBeforeDelete.userId) {
+    return res.status(401).json({
+    message: 'Unauthorized user',
+    }); 
+  }
+
+  await blogPostService.deleteBlogPostById(id);
+
+  return res.status(204).json();
+};
+
 module.exports = {
   createBlogPost,
   getAllBlogPosts,
   getBlogPostsById,
+  getBlogPostsByTerm,
   updateBlogPostById,
+  deleteBlogPostById,
 };

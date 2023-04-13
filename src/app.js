@@ -26,10 +26,14 @@ app.post('/post', validateJWT, verifyBlogPostFields, blogPostController.createBl
 app.get('/user/:id', validateJWT, userController.getByUserId);
 app.get('/user', validateJWT, userController.getAllUsers);
 app.get('/categories', validateJWT, categoryController.getAllCategories);
+app.get('/post/search', validateJWT, blogPostController.getBlogPostsByTerm);
 app.get('/post/:id', validateJWT, blogPostController.getBlogPostsById);
 app.get('/post', validateJWT, blogPostController.getAllBlogPosts);
 
 app.put('/post/:id', validateJWT, blogPostController.updateBlogPostById);
+
+app.delete('/post/:id', validateJWT, blogPostController.deleteBlogPostById);
+app.delete('/user/me', validateJWT, userController.deleteYourself);
 
 // É importante exportar a constante `app`,
 // para que possa ser utilizada pelo arquivo `src/server.js`

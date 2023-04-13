@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
 const userService = require('../services/userService');
 
+const genericError = { message: 'Ocorreu um erro' };
+
 const { JWT_SECRET } = process.env;
 
 const createLogin = async (req, res) => {
@@ -12,18 +14,15 @@ const createLogin = async (req, res) => {
     }); 
     }
     const user = await userService.getByUser(email, password);
-    
     if (user.message) return res.status(400).json(user);
-    
     const payload = {
       username: req.body.email,
+      id: user.id,
       admin: false };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
-    
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' }); 
     return res.status(200).json({ token });
   } catch (e) {
-    console.log(e.message);
-    res.status(500).json({ message: 'Ocorreu um erro' });
+    res.status(500).json(genericError);
   }
 };
 
@@ -36,13 +35,14 @@ const createUser = async (req, res) => {
 
     const payload = {
       username: email,
+      id: newUser.id,
       admin: false };
-    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1d' });
     
     return res.status(201).json({ token });
   } catch (e) {
     console.log(e.message);
-    res.status(500).json({ message: 'Ocorreu um erro' });
+    res.status(500).json(genericError);
   }
 };
 
@@ -53,13 +53,12 @@ const getAllUsers = async (req, res) => {
     return res.status(200).json(allUsers);
   } catch (e) {
     console.log(e.message);
-    res.status(500).json({ message: 'Ocorreu um erro' });
+    res.status(500).json(genericError);
   }
 };
 
 const getByUserId = async (req, res) => {
   const { id } = req.params;
-  console.log(id);
   try {
     const user = await userService.getByUserId(id);
 
@@ -68,7 +67,21 @@ const getByUserId = async (req, res) => {
     return res.status(200).json(user);
   } catch (e) {
     console.log(e.message);
-    res.status(500).json({ message: 'Ocorreu um erro' });
+    res.status(500).json(genericError);
+  }
+};
+
+const deleteYourself = async (req, res) => {
+  const { authorization } = req.headers;
+  const decoded = jwt.decode(authorization);
+  console.log(decoded);
+  try {
+    await userService.deleteYourself(decoded.id);
+
+    return res.status(204).json();
+  } catch (e) {
+    console.log(e.message);
+    res.status(500).json(genericError);
   }
 };
 
@@ -77,4 +90,5 @@ module.exports = {
   createUser,
   getAllUsers,
   getByUserId,
+  deleteYourself,
 };
