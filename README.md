@@ -9,7 +9,6 @@ Implementei o backend de uma aplicação que produz conteúdos para um blog. Com
 - Arquitetura MSC
 - Docker 
 - Node.js
-- Javascript
 
 ## Features implementadas: ##
 
